@@ -1,0 +1,93 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+public class BanProgramGUI extends JFrame implements ActionListener {
+    private JButton banButton, skipButton, innocenceButton, nextButton, exitButton;
+    private Player[] players;
+    private int currentPlayerIndex;
+
+    public BanProgramGUI() {
+        super("Ban Program");
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(5, 1));
+
+        banButton = new JButton("Ban");
+        banButton.setForeground(Color.RED);
+        banButton.addActionListener(this);
+        panel.add(banButton);
+
+        skipButton = new JButton("Skip");
+        skipButton.setForeground(Color.BLUE);
+        skipButton.addActionListener(this);
+        panel.add(skipButton);
+
+        innocenceButton = new JButton("Innocence");
+        innocenceButton.setForeground(Color.GREEN);
+        innocenceButton.addActionListener(this);
+        panel.add(innocenceButton);
+
+        nextButton = new JButton("Next");
+        nextButton.setForeground(Color.GREEN);
+        nextButton.addActionListener(this);
+        panel.add(nextButton);
+
+        exitButton = new JButton("Exit");
+        exitButton.setForeground(Color.GREEN);
+        exitButton.addActionListener(this);
+        panel.add(exitButton);
+
+        add(panel);
+
+        players = Bukkit.getServer().getOnlinePlayers().toArray(new Player[0]);
+        currentPlayerIndex = 0;
+
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == banButton) {
+            banPlayer();
+        } else if (e.getSource() == skipButton) {
+            skipPlayer();
+        } else if (e.getSource() == innocenceButton) {
+            nextPlayer();
+        } else if (e.getSource() == nextButton) {
+            nextPlayer();
+        } else if (e.getSource() == exitButton) {
+            dispose();
+        }
+    }
+
+    private void banPlayer() {
+        Player player = players[currentPlayerIndex];
+        player.kickPlayer("You have been banned from the server.");
+        JOptionPane.showMessageDialog(null, "Player " + player.getName() + " has been banned!", "Ban Player", JOptionPane.WARNING_MESSAGE);
+        nextPlayer();
+    }
+
+    private void skipPlayer() {
+        Player player = players[currentPlayerIndex];
+        JOptionPane.showMessageDialog(null, "Skipping player " + player.getName() + "...", "Skip Player", JOptionPane.INFORMATION_MESSAGE);
+        nextPlayer();
+    }
+
+    private void nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        Player player = players[currentPlayerIndex];
+        JOptionPane.showMessageDialog(null, "Going to next player " + player.getName() + "...", "Next Player", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void main(String[] args) {
+        new BanProgramGUI();
+    }
+}
